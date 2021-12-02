@@ -15,6 +15,7 @@ function TableUi() {
     start: 0,
     end: showPerPage,
   });
+  const [filtervalue, setFiltervalue] = useState([]);
 
   useEffect(() => {
     fetch(
@@ -47,11 +48,16 @@ function TableUi() {
       border: 0,
     },
   }));
-
+  const handlefilterdata = (e) => {
+    const pricevalue = mydata.filter(
+      (data) => data.price == parseInt(Math.round(e.target.value))
+    );
+    setFiltervalue(pricevalue);
+  };
   return (
     <div className="App">
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 800 }} aria-label="customized table">
+        <Table sx={{ minWidth: "100%" }} aria-label="customized table">
           <TableHead>
             <TableRow>
               <StyledTableCell align="left">Medicine name</StyledTableCell>
@@ -61,28 +67,62 @@ function TableUi() {
               <StyledTableCell align="left">specialPrice</StyledTableCell>
               <StyledTableCell align="left">rating</StyledTableCell>
             </TableRow>
+            <StyledTableCell align="left">
+              <input
+                type="text"
+                placeholder="Search by price range"
+                onChange={handlefilterdata}
+              />
+            </StyledTableCell>
           </TableHead>
-          {mydata.slice(pagination.start, pagination.end).map((data) => {
-            return (
-              <>
-                <StyledTableRow
-                  key={data._id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <StyledTableCell align="left">{data.name.en}</StyledTableCell>
-                  <StyledTableCell align="left">{data.brand}</StyledTableCell>
-                  <StyledTableCell align="left">
-                    {data.routeOfAdministration}
-                  </StyledTableCell>
-                  <StyledTableCell align="left">{data.price}</StyledTableCell>
-                  <StyledTableCell align="left">
-                    {data.specialPrice}
-                  </StyledTableCell>
-                  <StyledTableCell align="left">{data.rating}</StyledTableCell>
-                </StyledTableRow>
-              </>
-            );
-          })}
+          {filtervalue.length > 3
+            ? filtervalue
+                .slice(pagination.start, pagination.end)
+                .map((data) => {
+                  return (
+                    <>
+                      <TableRow
+                        key={data._id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell align="right">{data.productId}</TableCell>
+                        <TableCell align="right">{data.price}</TableCell>
+                        <TableCell align="right">{data.specialPrice}</TableCell>
+                      </TableRow>
+                    </>
+                  );
+                })
+            : mydata.slice(pagination.start, pagination.end).map((data) => {
+                return (
+                  <>
+                    <StyledTableRow
+                      key={data._id}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <StyledTableCell align="left">
+                        {data.name.en}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {data.brand}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {data.routeOfAdministration}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {data.price}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {data.specialPrice}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {data.rating}
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  </>
+                );
+              })}
         </Table>
       </TableContainer>
 
